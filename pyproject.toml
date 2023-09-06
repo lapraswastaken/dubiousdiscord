@@ -1,5 +1,5 @@
 [build-system]
-requires = ["setuptools", "wheel", "setuptools-scm"]
+requires = ["setuptools", "wheel", "setuptools-scm[toml]"]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -21,3 +21,5 @@ dynamic = ["version"]
 
 [tool.setuptools]
 packages = ["dubiousdiscord"]
+
+[tool.setuptools_scm]

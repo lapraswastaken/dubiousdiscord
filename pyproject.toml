@@ -20,6 +20,7 @@ dependencies = [
 dynamic = ["version"]
 
 [tool.setuptools]
-packages = ["dubiousdiscord"]
+package-dir = {"" = "src"}
+packages = ["dubious"]
 
 [tool.setuptools_scm]

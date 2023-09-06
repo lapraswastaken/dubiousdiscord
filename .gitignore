@@ -6,3 +6,4 @@ docparse
 _build
 Makefile
 make.bat
+dist

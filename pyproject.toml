@@ -24,3 +24,4 @@ package-dir = {"" = "src"}
 packages = ["dubious"]
 
 [tool.setuptools_scm]
+local_scheme = "no-local-version"

@@ -13,6 +13,10 @@ from requests import request
 
 
 class Snowflake(str):
+    """ Represents a `Discord Snowflake <https://discord.com/developers/docs/reference#snowflakes>`_.
+    
+        :mod:`dubious.discord.api` imports this. It's acceptable to ``from dubious.discord import api`` and use ``api.Snowflake`` instead of ``disc.Snowflake``. """
+
     def __init__(self, r: str|int):
         self.id = int(r) if isinstance(r, str) else r
         self.timestamp = (self.id >> 22) + 1420070400000
@@ -42,12 +46,13 @@ class Snowflake(str):
 
 @dc.dataclass
 class Disc:
-    """ Root class for all Discord objects. """
+    """ Root class for all Discord objects. Exists in case there's some functionality to be implemented across every Discord data structure. """
 
 t_Cast = t.TypeVar("t_Cast")
-def cast(t_to: type[t_Cast], raw: t.Any, debug: t.Callable[..., None] = lambda *_, **__: None) -> t_Cast:
-    debug(t_to)
-    debug(raw)
+""" Represents the return type of :func:`.cast`."""
+def cast(t_to: type[t_Cast], raw: t.Any) -> t_Cast:
+    """ Casts ``raw`` data of any shape to the given type, ``t_to``.  """
+
     if raw is None: return raw
 
     if dc.is_dataclass(raw):
@@ -110,9 +115,23 @@ def cast(t_to: type[t_Cast], raw: t.Any, debug: t.Callable[..., None] = lambda *
     except ValueError:
         return raw
 
+def uncast(raw: t.Any):
+    """ Transforms an object to a json-compatible object. """
+
+    if dc.is_dataclass(raw):
+        return dc.asdict(raw)
+    elif isinstance(raw, dict):
+        return {uncast(k): uncast(v) for k, v in raw.items()}
+    elif isinstance(raw, list):
+        return [uncast(v) for v in raw]
+    else:
+        return raw
+
 ROOT = "https://discord.com/api"
 
 class Http(str, enum.Enum):
+    """ Enum for each potential type of request to make to the Discord API. """
+
     GET = "GET"
     PUT = "PUT"
     PATCH = "PATCH"
@@ -120,18 +139,31 @@ class Http(str, enum.Enum):
     DELETE = "DELETE"
 
 t_Ret = t.TypeVar("t_Ret")
+""" Represents the type that an :class:`HttpReq` will return upon success. """
 class HttpReq(abc.ABC, t.Generic[t_Ret]):
+    """ A class that holds information about a request to make to the Discord API.
+     
+        Subclasses should define within themselves a class for the :attr:`.query` attribute and/or the :attr:`.form` attribute, if either exist, and appropriately set the type hints of either. """
+    
     query: Disc | None = None
+    """ An object to give to the request. Acts as a query string in the URL; is given to :func:`requests.request` as the ``params`` kwarg. """
     form: Disc | None = None
+    """ An object to give to the request. Acts as a json string in the request's body; is given to :func:`requests.request` as the ``json`` kwarg. """
 
-    method: Http
+    method: t.ClassVar[Http]
+    """ The HTTP method with which to make the request. Given to :func:`requests.request` as the ``method`` argument. """
     endpoint: str
+    """ The URL at which the request should be made. Given to :func:`requests.request` as the ``url`` argument. This field is set dynamically in a subclass's ``__post_init__`` in order to allow for per-guild/per-channel/etc. requests. """
 
     @abc.abstractmethod
     def cast(self, data: t.Any) -> t_Ret:
         ...
 
     def do_with(self, token: str) -> t_Ret:
+        """ Perform this Discord API request with :func:`requests.request`. Requires authentication using a bot token - this is usually :attr:`dubious.pory.Pory.token`.
+        
+            When a rate limit is encountered, wait the response's given time and retry (by calling recursively). """
+
         res = request(self.method, ROOT + self.endpoint,
             headers={
                 "Authorization": f"Bot {token}"

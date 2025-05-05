@@ -15,7 +15,10 @@ from requests import request
 class Snowflake(str):
     """ Represents a `Discord Snowflake <https://discord.com/developers/docs/reference#snowflakes>`_.
     
-        :mod:`dubious.discord.api` imports this. It's acceptable to ``from dubious.discord import api`` and use ``api.Snowflake`` instead of ``disc.Snowflake``. """
+        :mod:`dubious.discord.api` imports this. It's acceptable to use
+         ``from dubious.discord import api`` and use ``api.Snowflake`` instead
+         of ``disc.Snowflake``.
+        """
 
     def __init__(self, r: str|int):
         self.id = int(r) if isinstance(r, str) else r
@@ -46,7 +49,9 @@ class Snowflake(str):
 
 @dc.dataclass
 class Disc:
-    """ Root class for all Discord objects. Exists in case there's some functionality to be implemented across every Discord data structure. """
+    """ Root class for all Discord objects. Exists in case there's some
+         functionality to be implemented across every Discord data structure.
+        """
 
 t_Cast = t.TypeVar("t_Cast")
 """ Represents the return type of :func:`.cast`."""
@@ -63,7 +68,8 @@ def cast(t_to: type[t_Cast], raw: t.Any) -> t_Cast:
         fieldtypes: dict[str, type] = t.get_type_hints(t_to)
         fixedraw = {
             field.name: cast(
-                fieldtypes[field.name], raw[field.name] if field.name in raw else None
+                fieldtypes[field.name], raw[field.name] if field.name in raw
+                 else None
             ) for field in dc.fields(t_to)
         }
         return t_to(**fixedraw)

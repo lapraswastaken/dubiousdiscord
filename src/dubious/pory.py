@@ -1,7 +1,10 @@
 
-""" The :mod:`dubious.pory` module defines the main class that will act as the bot: :class:`Pory`.
+""" The :mod:`dubious.pory` module defines the main class that will act as the
+     bot: :class:`Pory`.
 
-    It also includes a special subclass, :class:`ConfiguredPory`, that makes per-guild (read: per-server) configuration easier. """
+    It also includes a special subclass, :class:`ConfiguredPory`, that makes
+     per-guild (read: per-server) configuration easier.
+    """
 
 
 from __future__ import annotations
@@ -23,11 +26,16 @@ from dubious.discord import api, disc, req
 
 
 class CommandFailure(Exception):
-    """ This class is a front-facing :class:`Exception` class to be thrown when an error is made by a user of the bot.
+    """ This class is a front-facing :class:`Exception` class to be thrown when
+         an error is made by a user of the bot.
         
-        It will be caught by :class:`Pory` and its :func:`~CommandFailure.error_embed` method will be used to decorate an appropriate error message.
+        It will be caught by :class:`Pory` and its
+         :func:`~CommandFailure.error_embed` method will be used to decorate an
+         appropriate error message.
         
-        Can be subclassed to alter the :func:`~CommandFailure.error_embed` method. """
+        Can be subclassed to alter the :func:`~CommandFailure.error_embed`
+         method.
+        """
 
     message: str
     def __init__(self, message: str) -> None:
@@ -35,10 +43,15 @@ class CommandFailure(Exception):
         self.message = message
 
     def error_embed(self):
-        """ Returns an :class:`.Embed` object which will be sent as the front-facing error message. """
+        """ Returns an :class:`.Embed` object which will be sent as the
+             front-facing error message.
+            """
         return api.Embed(color=0xFF3300, description=str(self.message))
 
-def _match_response_type(response: api.InteractionCallbackData | None, ixn_type: api.InteractionType) -> api.InteractionCallbackType:
+def _match_response_type(
+    response: api.InteractionCallbackData | None,
+    ixn_type: api.InteractionType
+) -> api.InteractionCallbackType:
     match response:
         case api.ResponseMessage():
             return api.InteractionCallbackType.CHANNEL_MESSAGE_WITH_SOURCE

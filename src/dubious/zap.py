@@ -93,37 +93,49 @@ class Trick:
 
 """
 Goal:
-    Create a way to store human-readable enumerable information in Discord messages, and create a way to parse that information back out of those messages.
+    Create a way to store human-readable enumerable information in Discord
+     messages, and create a way to parse that information back out of those
+     messages.
     Examples:
         "Query: `$query_tokens.sep{, }`"
         - "Query: `":
             Literal; doesn't store information.
         - "$query_tokens":
-            This will be replaced with a variable called "query_tokens", given when serializing.
+            This will be replaced with a variable called "query_tokens", given
+             when serializing.
             The intent is for this variable to be a list of strings.
         - ".sep{, }":
-            This modifier, appended to the query_tokens variable, will separate the variable's items by commas.
+            This modifier, appended to the query_tokens variable, will separate
+             the variable's items by commas.
         - "`":
             Literal.
         
-        "$allowed_users.empty?.lit{Anyone}.else.sep{, }.fmt{<@{}>} can use this query."
+        "$allowed_users.empty?.lit{Anyone}.else.sep{, }.fmt{<@{}>} can use this
+         query."
         - "$allowed_users":
             Use a variable named "allowed_users".
         - ".empty?":
-            This modifier, appended to the allowed_users variable, will only include the modifiers following it up until the ".else" modifier if the given value for the variable is empty.
+            This modifier, appended to the allowed_users variable, will only
+             include the modifiers following it up until the ".else" modifier if
+             the given value for the variable is empty.
         - ".lit{Anyone}":
             This modifier will evaluate to the literal string "Anyone".
         - ".else":
-            This modifier ends the modifiers for a conditional modifier and begins the modifiers for the alternative.
+            This modifier ends the modifiers for a conditional modifier and
+             begins the modifiers for the alternative.
         - ".sep{, }":
             Separates the variable's items by commas.
         - ".fmt{<@{}>}":
-            Surrounds each of the variable's items with <@ and >, replacing the {} with the item itself.
+            Surrounds each of the variable's items with <@ and >, replacing the
+             {} with the item itself.
         - " can use this query.":
             Literal.
     
-    Can't use regular expressions to parse the rules - the final character of a variable and its modifiers is whitespace, but there can be whitespace inside of curly brackets without ending the modifiers.
-    Conditional modifiers can't be nested - modifiers can't be nested inside of other modifiers.
+    Can't use regular expressions to parse the rules - the final character of a
+     variable and its modifiers is whitespace, but there can be whitespace
+     inside of curly brackets without ending the modifiers.
+    Conditional modifiers can't be nested - modifiers can't be nested inside of
+     other modifiers.
 """
 
 class States(enum.Enum):
